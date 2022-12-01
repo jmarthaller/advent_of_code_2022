@@ -1,7 +1,5 @@
-
-
+# day one
 calorie_list = File.readlines 'calorie_list.rb' 
-
 def find_most_calories(list)
     each_elf_backpack_arr = []
     individual_elf_pack = 0
@@ -13,8 +11,7 @@ def find_most_calories(list)
             individual_elf_pack += calorie.to_i
         end
     end
-    max_value = each_elf_backpack_arr.max()
+    max_value = each_elf_backpack_arr.max(3).reduce(:+)
     return max_value
 end
-
 puts find_most_calories(calorie_list)
