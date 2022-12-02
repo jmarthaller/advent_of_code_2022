@@ -16,7 +16,6 @@
 # end
 # puts find_most_calories(calorie_list)
 
-
 # day two 
 moves_list = File.readlines 'strategy_list.rb' 
 def calculate_score(list)
@@ -24,8 +23,7 @@ def calculate_score(list)
     list.each do |round|
         splitted = round.split(" ")
         round_moves = splitted[0] + "-" + splitted[1]
-
-        # first round conditional logic 
+        ### first round conditional logic 
         # case round_moves
         # when "A-X"
         #     total_score += 4 
@@ -48,8 +46,7 @@ def calculate_score(list)
         # else
         #     invalid_input += 1
         # end
-
-        # second round conditional logic
+        ### second round conditional logic
         case round_moves
         when "A-X"
             total_score += 3 #
