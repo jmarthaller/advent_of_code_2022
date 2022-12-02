@@ -19,16 +19,15 @@
 
 # day two 
 moves_list = File.readlines 'strategy_list.rb' 
-# Rock = X, Paper = Y, Scissors = Z     --- Rock = 1, Paper = 2, Scissors = 3
-# Rock = A, Paper = B, Scissors = C     --- Win = 6, Draw = 3, Loss = 0
 def calculate_score(list)
     total_score = 0
+    invalid_input = 0
     list.each do |round|
         splitted = round.split(" ")
         opponent_move = splitted[0]
         my_move = splitted[1]
         round_moves = opponent_move + "-" + my_move
-        # first round logic
+        # first round conditional logic 
         # case round_moves
         # when "A-X"
         #     total_score += 4 
@@ -51,33 +50,33 @@ def calculate_score(list)
         # else
         #     invalid_input += 1
         # end
-        #
-        #
-        
-        # second round logic
+        # second round conditional logic
         case round_moves
         when "A-X"
-            total_score += 4 
+            total_score += 3 #
         when "A-Y"
-            total_score += 8 
+            total_score += 4 #
         when "A-Z"
-            total_score += 3 
+            total_score += 8 #
         when "B-X"
-            total_score += 1 
+            total_score += 1 #
         when "B-Y" 
-            total_score += 5 
+            total_score += 5 #
         when "B-Z"
-            total_score += 9 
+            total_score += 9 #
         when "C-X"
-            total_score += 7 
+            total_score += 2 #
         when "C-Y"
-            total_score += 2 
+            total_score += 6 #
         when "C-Z"
-            total_score += 6 
+            total_score += 7 #
         else
             invalid_input += 1
         end
     end
+    puts "#{invalid_input}"
     return total_score
 end
 puts calculate_score(moves_list)
+
+
