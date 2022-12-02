@@ -21,12 +21,10 @@
 moves_list = File.readlines 'strategy_list.rb' 
 def calculate_score(list)
     total_score = 0
-    invalid_input = 0
     list.each do |round|
         splitted = round.split(" ")
-        opponent_move = splitted[0]
-        my_move = splitted[1]
-        round_moves = opponent_move + "-" + my_move
+        round_moves = splitted[0] + "-" + splitted[1]
+
         # first round conditional logic 
         # case round_moves
         # when "A-X"
@@ -50,6 +48,7 @@ def calculate_score(list)
         # else
         #     invalid_input += 1
         # end
+
         # second round conditional logic
         case round_moves
         when "A-X"
@@ -71,10 +70,9 @@ def calculate_score(list)
         when "C-Z"
             total_score += 7 #
         else
-            invalid_input += 1
+            puts "invalid move"
         end
     end
-    puts "#{invalid_input}"
     return total_score
 end
 puts calculate_score(moves_list)
