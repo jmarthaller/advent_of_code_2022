@@ -97,13 +97,11 @@ rucksack_list = File.readlines 'rucksack_list.rb'
 def locate_badge_score(rucksack)
     score = 0
     rucksack.each_slice(3) do |sack|
-        common_letter = sack[0].split("") & sack[1].split("") & sack[2].split("")
-        # puts common_letter
-        char_points = common_letter[0].ord
-        if char_points > 96 
-            score += char_points - 96
-        elsif char_points < 91
-            score += char_points - 38
+        common_letter_points = (sack[0].split("") & sack[1].split("") & sack[2].split(""))[0].ord
+        if common_letter_points > 96 
+            score += common_letter_points - 96
+        else
+            score += common_letter_points - 38
         end
     end
     return score
