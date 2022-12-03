@@ -76,22 +76,38 @@
 
 # day 3 
 rucksack_list = File.readlines 'rucksack_list.rb'
-def find_priority_score(rucksack)
+# def find_priority_score(rucksack)
+#     score = 0
+#     rucksack.each do |sack|
+#         first_half = sack[0, sack.size.to_f / 2]
+#         second_half = sack[-(sack.size.to_f / 2) - 1, sack.size - 1]
+#         common_letter = first_half.split("") & second_half.split("")
+#         char_points = common_letter[0].ord
+#         if char_points > 96 
+#             score += char_points - 96
+#         elsif char_points < 91
+#             score += char_points - 38
+#         end
+
+#     end
+#     return score
+# end
+# puts find_priority_score(rucksack_list)
+
+def locate_badge_score(rucksack)
     score = 0
-    rucksack.each do |sack|
-        first_half = sack[0, sack.size.to_f / 2]
-        second_half = sack[-(sack.size.to_f / 2) - 1, sack.size - 1]
-        common_letter = first_half.split("") & second_half.split("")
+    rucksack.each_slice(3) do |sack|
+        common_letter = sack[0].split("") & sack[1].split("") & sack[2].split("")
+        # puts common_letter
         char_points = common_letter[0].ord
         if char_points > 96 
             score += char_points - 96
         elsif char_points < 91
             score += char_points - 38
         end
-
     end
     return score
 end
-puts find_priority_score(rucksack_list)
+puts locate_badge_score(rucksack_list)
 
 
