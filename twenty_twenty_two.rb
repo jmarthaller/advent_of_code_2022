@@ -114,22 +114,30 @@ assignments = File.readlines 'assignment_list.rb'
 def rearrange_assignments(list)
     count = 0
 
-    list.each do |assignment|
+    list.each_with_index do |assignment, idx|
         splitted = assignment.split(",")
         first_asst = splitted[0].split("-")
         second_asst = splitted[1].split("-")
 
-        if first_asst[0].to_i >= second_asst[0].to_i and first_asst[1].to_i <= second_asst[1].to_i
+        puts "#{first_asst[0]} + #{first_asst[1]} --- #{second_asst[0]} + #{second_asst[1]}"
+        (10..20).include?(14) # true
+        if (first_asst[0].to_i..first_asst[1].to_i).include?(second_asst[0].to_i)
             count += 1
-        elsif second_asst[0].to_i >= first_asst[0].to_i and second_asst[1].to_i <= first_asst[1].to_i
+        elsif (second_asst[0].to_i..second_asst[1].to_i).include?(first_asst[0].to_i)
             count += 1
         end
-
+        # if idx == 4
+        #     break
+        # end
     end
 
     return count
 end
 puts rearrange_assignments(assignments)
-#  6 +++ 6  ---  4 +++ 6
-#  2 +++ 8  ---  3 +++ 7
-# 16 +++ 80 --- 80 +++ 87
+
+
+# 5-7,7-9, 
+# 2-8,3-7, 
+# 6-6,4-6, 
+# 2-6,4-8,
+
