@@ -119,25 +119,15 @@ def rearrange_assignments(list)
         first_asst = splitted[0].split("-")
         second_asst = splitted[1].split("-")
 
-        puts "#{first_asst[0]} + #{first_asst[1]} --- #{second_asst[0]} + #{second_asst[1]}"
-        (10..20).include?(14) # true
         if (first_asst[0].to_i..first_asst[1].to_i).include?(second_asst[0].to_i)
             count += 1
         elsif (second_asst[0].to_i..second_asst[1].to_i).include?(first_asst[0].to_i)
             count += 1
         end
-        # if idx == 4
-        #     break
-        # end
     end
 
     return count
 end
 puts rearrange_assignments(assignments)
 
-
-# 5-7,7-9, 
-# 2-8,3-7, 
-# 6-6,4-6, 
-# 2-6,4-8,
 
