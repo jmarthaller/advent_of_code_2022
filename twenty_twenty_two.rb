@@ -75,7 +75,7 @@
 # puts calculate_score(moves_list)
 
 # day 3 
-rucksack_list = File.readlines 'rucksack_list.rb'
+# rucksack_list = File.readlines 'rucksack_list.rb'
 # def find_priority_score(rucksack)
 #     score = 0
 #     rucksack.each do |sack|
@@ -94,18 +94,42 @@ rucksack_list = File.readlines 'rucksack_list.rb'
 # end
 # puts find_priority_score(rucksack_list)
 
-def locate_badge_score(rucksack)
-    score = 0
-    rucksack.each_slice(3) do |sack|
-        common_letter_points = (sack[0].split("") & sack[1].split("") & sack[2].split(""))[0].ord
-        if common_letter_points > 96 
-            score += common_letter_points - 96
-        else
-            score += common_letter_points - 38
+# def locate_badge_score(rucksack)
+#     score = 0
+#     rucksack.each_slice(3) do |sack|
+#         common_letter_points = (sack[0].split("") & sack[1].split("") & sack[2].split(""))[0].ord
+#         if common_letter_points > 96 
+#             score += common_letter_points - 96
+#         else
+#             score += common_letter_points - 38
+#         end
+#     end
+#     return score
+# end
+# puts locate_badge_score(rucksack_list)
+
+
+# day 4
+assignments = File.readlines 'assignment_list.rb'
+def rearrange_assignments(list)
+    count = 0
+
+    list.each do |assignment|
+        splitted = assignment.split(",")
+        first_asst = splitted[0].split("-")
+        second_asst = splitted[1].split("-")
+
+        if first_asst[0].to_i >= second_asst[0].to_i and first_asst[1].to_i <= second_asst[1].to_i
+            count += 1
+        elsif second_asst[0].to_i >= first_asst[0].to_i and second_asst[1].to_i <= first_asst[1].to_i
+            count += 1
         end
+
     end
-    return score
+
+    return count
 end
-puts locate_badge_score(rucksack_list)
-
-
+puts rearrange_assignments(assignments)
+#  6 +++ 6  ---  4 +++ 6
+#  2 +++ 8  ---  3 +++ 7
+# 16 +++ 80 --- 80 +++ 87
