@@ -110,24 +110,76 @@
 
 
 # day 4
-assignments = File.readlines 'assignment_list.rb'
-def rearrange_assignments(list)
-    count = 0
+# assignments = File.readlines 'assignment_list.rb'
+# def rearrange_assignments(list)
+#     count = 0
 
-    list.each_with_index do |assignment, idx|
-        splitted = assignment.split(",")
-        first_asst = splitted[0].split("-")
-        second_asst = splitted[1].split("-")
+#     list.each_with_index do |assignment, idx|
+#         splitted = assignment.split(",")
+#         first_asst = splitted[0].split("-")
+#         second_asst = splitted[1].split("-")
 
-        if (first_asst[0].to_i..first_asst[1].to_i).include?(second_asst[0].to_i)
-            count += 1
-        elsif (second_asst[0].to_i..second_asst[1].to_i).include?(first_asst[0].to_i)
-            count += 1
+#         if (first_asst[0].to_i..first_asst[1].to_i).include?(second_asst[0].to_i)
+#             count += 1
+#         elsif (second_asst[0].to_i..second_asst[1].to_i).include?(first_asst[0].to_i)
+#             count += 1
+#         end
+#     end
+
+#     return count
+# end
+# puts rearrange_assignments(assignments)
+
+
+# day 5
+rearrangements = File.readlines 'rearrangement_list.rb'
+def report_rearrangements(list)
+    original_arrangment = list[0..7]
+    new_arr =  Array.new(9, "")
+    original_arrangment.each do |row|
+        row.each_char.with_index do |item, idx|
+            if (item != " " and item != "[" and item != "]" and item != "\n")
+                if idx == 1
+                    new_arr[0] += item
+                elsif idx == 5
+                    new_arr[1] += item
+                elsif idx == 9
+                    new_arr[2] += item
+                elsif idx == 13
+                    new_arr[3] += item
+                elsif idx == 17
+                    new_arr[4] += item
+                elsif idx == 21
+                    new_arr[5] += item
+                elsif idx == 25
+                    new_arr[6] += item
+                elsif idx == 29
+                    new_arr[7] += item
+                elsif idx == 33
+                    new_arr[8] += item
+                end
+                
+            end
         end
     end
+    puts "#{new_arr}"
+    commands_arr = list[10..-1]
+    commands_arr.each_with_index do |command, idx|
+        num_to_move = command.split("move ")[1].split(" from")[0].to_i
+        from_column = command.split("from ")[1].split(" to")[0].to_i - 1
+        to_column = command.split("to ")[1].to_i - 1
+        sliced_letters = new_arr[from_column].slice(num_to_move * -1, new_arr[from_column].length)
+        puts "------------------------------------------"
+        puts command
+        puts "#{new_arr}"
+        puts "== #{idx} =="
+        puts "------------------------------------------"
+        new_arr[to_column].concat(sliced_letters)
+        new_arr[from_column] = new_arr[from_column].delete!(sliced_letters)
 
-    return count
+    end
+    puts "#{new_arr}"
 end
-puts rearrange_assignments(assignments)
 
+report_rearrangements(rearrangements)
 
