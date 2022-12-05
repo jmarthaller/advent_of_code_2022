@@ -133,53 +133,89 @@
 
 # day 5
 rearrangements = File.readlines 'rearrangement_list.rb'
-def report_rearrangements(list)
-    original_arrangment = list[0..7]
-    new_arr =  Array.new(9, "")
-    original_arrangment.each do |row|
-        row.each_char.with_index do |item, idx|
-            if (item != " " and item != "[" and item != "]" and item != "\n")
-                if idx == 1
-                    new_arr[0] += item
-                elsif idx == 5
-                    new_arr[1] += item
-                elsif idx == 9
-                    new_arr[2] += item
-                elsif idx == 13
-                    new_arr[3] += item
-                elsif idx == 17
-                    new_arr[4] += item
-                elsif idx == 21
-                    new_arr[5] += item
-                elsif idx == 25
-                    new_arr[6] += item
-                elsif idx == 29
-                    new_arr[7] += item
-                elsif idx == 33
-                    new_arr[8] += item
-                end
+# require 'net/http'
+# require 'uri'
+
+# uri = URI.parse('https://gist.githubusercontent.com/matass/82a9650befe14104f2bb5766cbbcf848/raw/12b86f119502585c88daa5fc2b2e87d3f4424b40/day_5')
+
+# request = Net::HTTP::Get.new(uri)
+# response = Net::HTTP.start(uri.hostname, uri.port, { use_ssl: uri.scheme == 'https' }) { |http| http.request(request) }
+
+# mapped_data = response.body.each_line.take(8).each_with_object({}) do |item, memo|
+#     arrays = item.chars.each_slice(4).map(&:join)
+
+#     (1..9).each do |counter|
+#       memo[counter] ||= []
+#       memo[counter].unshift(arrays[counter - 1][1]) unless arrays[counter - 1][1] == ' '
+#     end
+# end
+
+# mapped_movers = response.body.each_line.drop(10).each_with_object([]) do |item, memo|
+#     memo << item.split.map(&:to_i).delete_if(&:zero?)
+# end
+
+# mapped_movers.each do |mover|
+#     move, from, to = mover
+
+#     mapped_data[from].pop(move).reverse.each { |item| mapped_data[to] << item }
+#     # for second part remove `reverse`
+# end
+
+# result = (1..9).each_with_object([]) { |item, memo| memo << mapped_data[item].last }.join
+
+# pp result
+# "SPFMVDTZT"
+
+# def report_rearrangements(list)
+#     original_arrangment = list[0..7]
+#     new_arr =  Array.new(9, "")
+#     original_arrangment.each do |row|
+#         row.each_char.with_index do |item, idx|
+#             if (item != " " and item != "[" and item != "]" and item != "\n")
+#                 if idx == 1
+#                     new_arr[0] += item
+#                 elsif idx == 5
+#                     new_arr[1] += item
+#                 elsif idx == 9
+#                     new_arr[2] += item
+#                 elsif idx == 13
+#                     new_arr[3] += item
+#                 elsif idx == 17
+#                     new_arr[4] += item
+#                 elsif idx == 21
+#                     new_arr[5] += item
+#                 elsif idx == 25
+#                     new_arr[6] += item
+#                 elsif idx == 29
+#                     new_arr[7] += item
+#                 elsif idx == 33
+#                     new_arr[8] += item
+#                 end
                 
-            end
-        end
-    end
-    puts "#{new_arr}"
-    commands_arr = list[10..-1]
-    commands_arr.each_with_index do |command, idx|
-        num_to_move = command.split("move ")[1].split(" from")[0].to_i
-        from_column = command.split("from ")[1].split(" to")[0].to_i - 1
-        to_column = command.split("to ")[1].to_i - 1
-        sliced_letters = new_arr[from_column].slice(num_to_move * -1, new_arr[from_column].length)
-        puts "------------------------------------------"
-        puts command
-        puts "#{new_arr}"
-        puts "== #{idx} =="
-        puts "------------------------------------------"
-        new_arr[to_column].concat(sliced_letters)
-        new_arr[from_column] = new_arr[from_column].delete!(sliced_letters)
+#             end
+#         end
+#     end
+#     puts "#{new_arr}"
+#     commands_arr = list[10..-1]
+#     commands_arr.each_with_index do |command, idx|
+#         num_to_move = command.split("move ")[1].split(" from")[0].to_i
+#         from_column = command.split("from ")[1].split(" to")[0].to_i - 1
+#         to_column = command.split("to ")[1].to_i - 1
+#         sliced_letters = new_arr[from_column].slice(num_to_move  * -1, new_arr[from_column].length).reverse
+#         puts "------------------------------------------"
+#         puts command
+#         puts "NUM TO MOVE #{num_to_move}"
+#         puts "FROM COLUMN #{from_column}"
+#         puts "TO COLUMN #{to_column}"
+#         puts "#{new_arr}"
+#         puts "== #{idx} =="
+#         puts "------------------------------------------"
+#         new_arr[to_column] += sliced_letters
+#         new_arr[from_column] = new_arr[from_column].delete!(sliced_letters)
 
-    end
-    puts "#{new_arr}"
-end
+#     end
+#     puts "#{new_arr}"
+# end
 
-report_rearrangements(rearrangements)
+# report_rearrangements(rearrangements)
 
