@@ -225,12 +225,12 @@ packets = File.readlines 'packet_data.rb'
 def find_first_marker(list)
   first_packet = 0
 
-  i = 3
+  i = 13
   j = 0
   while i < list[0].length do
     backward_slice = list[0][j..i].split("").uniq
 
-    if backward_slice.length == 4
+    if backward_slice.length == 14
         first_packet = i
         break
     end
@@ -239,7 +239,7 @@ def find_first_marker(list)
     j += 1
   end
 
-  return first_packet
+  return first_packet + 1
 end
 puts find_first_marker(packets)
 
@@ -247,3 +247,6 @@ puts find_first_marker(packets)
 # gwwj
 # wwjd
 # cclbllqgghjhlhthwrdglrmcpbmtrnrdt
+# mjqjpqmgbljsphdztnv
+
+# jfqwrcgsmlb
