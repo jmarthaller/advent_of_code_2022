@@ -219,3 +219,31 @@ rearrangements = File.readlines 'rearrangement_list.rb'
 
 # report_rearrangements(rearrangements)
 
+
+# day 6
+packets = File.readlines 'packet_data.rb'
+def find_first_marker(list)
+  first_packet = 0
+
+  i = 3
+  j = 0
+  while i < list[0].length do
+    backward_slice = list[0][j..i].split("").uniq
+
+    if backward_slice.length == 4
+        first_packet = i
+        break
+    end
+
+    i += 1
+    j += 1
+  end
+
+  return first_packet
+end
+puts find_first_marker(packets)
+
+# mgww
+# gwwj
+# wwjd
+# cclbllqgghjhlhthwrdglrmcpbmtrnrdt
