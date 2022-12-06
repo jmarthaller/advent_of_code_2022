@@ -242,11 +242,3 @@ def find_first_marker(list)
   return first_packet + 1
 end
 puts find_first_marker(packets)
-
-# mgww
-# gwwj
-# wwjd
-# cclbllqgghjhlhthwrdglrmcpbmtrnrdt
-# mjqjpqmgbljsphdztnv
-
-# jfqwrcgsmlb
