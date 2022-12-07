@@ -259,6 +259,6 @@ def calculate_filesystem_size
         else
         end
     end
-    return folder_sizes.values.reject { |i| i > 100_000 }.sum
+    return folder_sizes.values.reject { |i| i > 100000 }.sum
 end
 puts calculate_filesystem_size
