@@ -259,6 +259,11 @@ def calculate_filesystem_size
         else
         end
     end
-    return folder_sizes.values.reject { |i| i > 100000 }.sum
+    # part one
+    # return folder_sizes.values.reject { |i| i > 100000 }.sum
+    # part two
+    return folder_sizes.values.reject { |i| i < folder_sizes['/'] - 40000000 }.min
 end
 puts calculate_filesystem_size
+
+
