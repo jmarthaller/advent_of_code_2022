@@ -268,51 +268,54 @@ rearrangements = File.readlines 'rearrangement_list.rb'
 
 
 # day 8
-tree_patch = File.readlines('day_08_input.txt', chomp: true)
-def calculate_tree_cover(list)
-    visible_interior = 0
+# tree_patch = File.readlines('day_08_input.txt', chomp: true)
+# def calculate_tree_cover(list)
+#     visible_interior = 0
     
-    list.each_with_index do |tree_row, idx|
-        next if idx == 0 or idx == list.size
-        tree_row.each_char.with_index do |tree, tree_index|
-            next if tree_index == 0 or tree_index == tree_row.size - 1
-            # consider each direction, mapping the total array in 
-            # each direction to see if the tree should be visible
-            # SKIPPING OTHER CHECKS IF ONE IS FOUND
+#     list.each_with_index do |tree_row, idx|
+#         next if idx == 0 or idx == list.size
+#         tree_row.each_char.with_index do |tree, tree_index|
+#             next if tree_index == 0 or tree_index == tree_row.size - 1
+#             # consider each direction, mapping the total array in 
+#             # each direction to see if the tree should be visible
+#             # SKIPPING OTHER CHECKS IF ONE IS FOUND
 
-            # from left 
-            patch_from_left = tree_row[0..tree_index - 1].split("").map(&:to_i)
-            visible_interior += 1 if tree.to_i > patch_from_left.max()
-            # from right 
-            patch_from_right = tree_row[tree_index + 1..-1].split("").map(&:to_i)
-            visible_interior += 1 if tree.to_i > patch_from_right.max()
-            # from top 
-            patch_from_top = list[0..idx - 1].map { |row| row[tree_index] }.map(&:to_i)
-            visible_interior += 1 if tree.to_i > patch_from_top.max()
-            # from bottom 
-            patch_from_bottom = list[idx+1..-1].map { |row| row[tree_index] }.map(&:to_i)
-            visible_interior += 1 if patch_from_bottom.size > 0 and tree.to_i > patch_from_bottom.max()
-        end
-    end
-
-    return visible_interior + 396 # all visible from edge
-end
-puts calculate_tree_cover(tree_patch)
-
-
-# input = File.readlines('day_08_input.txt', chomp: true)
-#             .map { |i| i.chars.map { |j| { height: j.to_i, visible: false, scores: [] } } }
-
-# [input, input.transpose].each do |grid|
-#   grid.each do |grid_row|
-#     [grid_row, grid_row.reverse].each do |row|
-#       row.reduce([]) do |memo, cell|
-#         cell[:visible] = true if cell[:height] > (memo.max || -1)
-#         cell[:scores].push((memo.reverse.index { |i| i >= cell[:height] } || (memo.size - 1)) + 1)
-#         memo + [cell[:height]]
-#       end
+#             # from left 
+#             patch_from_left = tree_row[0..tree_index - 1].split("").map(&:to_i)
+#             visible_interior += 1 if tree.to_i > patch_from_left.max()
+#             # from right 
+#             patch_from_right = tree_row[tree_index + 1..-1].split("").map(&:to_i)
+#             visible_interior += 1 if tree.to_i > patch_from_right.max()
+#             # from top 
+#             patch_from_top = list[0..idx - 1].map { |row| row[tree_index] }.map(&:to_i)
+#             visible_interior += 1 if tree.to_i > patch_from_top.max()
+#             # from bottom 
+#             patch_from_bottom = list[idx+1..-1].map { |row| row[tree_index] }.map(&:to_i)
+#             visible_interior += 1 if patch_from_bottom.size > 0 and tree.to_i > patch_from_bottom.max()
+#         end
 #     end
-#   end
+
+#     return visible_interior + 396 # all visible from edge
 # end
+# puts calculate_tree_cover(tree_patch)
+
+
+input = File.readlines('day_08_input.txt', chomp: true)
+            .map { |i| i.chars.map { |j| { height: j.to_i, visible: false, scores: [] } } }
+
+[input, input.transpose].each do |grid|
+  grid.each do |grid_row|
+    [grid_row, grid_row.reverse].each do |row|
+      row.reduce([]) do |memo, cell|
+        cell[:visible] = true if cell[:height] > (memo.max || -1)
+        cell[:scores].push((memo.reverse.index { |i| i >= cell[:height] } || (memo.size - 1)) + 1)
+        memo + [cell[:height]]
+      end
+    end
+  end
+end
 
 # puts input.flatten.select { |i| i[:visible].eql? true }.count
+puts input.flatten.map { |i| i[:scores].reduce(:*) }.max
+puts input.flatten.select { |i| i[:scores].reduce(:*) == 235200 }
+# puts input.flatten.map { |i| i[:scores].reduce(:*) }.max
