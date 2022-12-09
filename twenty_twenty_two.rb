@@ -1,3 +1,5 @@
+#! /usr/bin/env ruby
+
 # day one
 # calorie_list = File.readlines 'calorie_list.rb' 
 # def find_most_calories(list)
@@ -316,3 +318,6 @@ rearrangements = File.readlines 'rearrangement_list.rb'
 # end
 # # puts input.flatten.select { |i| i[:visible].eql? true }.count
 # puts input.flatten.map { |i| i[:scores].reduce(:*) }.max
+
+
+# day 9
