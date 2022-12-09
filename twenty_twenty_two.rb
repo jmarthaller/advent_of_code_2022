@@ -321,3 +321,49 @@ rearrangements = File.readlines 'rearrangement_list.rb'
 
 
 # day 9
+require 'matrix'
+
+input = File.readlines('day_09_input.txt', chomp: true).map { |l|
+  dir, mag = l.split
+  [dir, mag.to_i]
+}
+
+DIRS = {
+  "U" => Vector[0, -1],
+  "D" => Vector[0, 1],
+  "R" => Vector[1, 0],
+  "L" => Vector[-1, 0],
+}
+
+def simulate(steps, length=2)
+  raise unless length >= 2
+  tail_positions = Hash.new
+
+  knots = Array.new(length) { Vector[0, 0] }
+  tail_positions[knots.last] = true
+
+  steps.each { |dir, mag|
+    mag.times {
+      knots[0] += DIRS[dir]
+
+      (1...knots.length).each { |i|
+        prev = knots[i-1]
+        knot = knots[i]
+
+        diff = (prev - knot)
+
+        if diff.magnitude >= 2
+          normalized = diff.map { |x| x == 0 ? 0 : x / x.abs }
+          knots[i] += normalized
+        end
+      }
+
+      tail_positions[knots.last] = true
+    }
+  }
+
+  return tail_positions.values.count(true)
+end
+
+p simulate(input)
+p simulate(input, 10)
