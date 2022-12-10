@@ -367,3 +367,31 @@ rearrangements = File.readlines 'rearrangement_list.rb'
 
 # p simulate(input)
 # p simulate(input, 10)
+
+#day 10 
+nums = File.readlines('day_10_input.txt', chomp: true)
+def sum_cycle_nums(path)
+    x = 1
+    count = 1
+    output_idx = 20
+    outputs = []
+    File.readlines('day_10_input.txt', chomp: true).for_each_line(path) do |line|
+      command, val = line.split
+      if count == output_idx
+        outputs << (x * output_idx)
+        output_idx += 40
+      end
+
+      unless command == 'noop'
+        count += 1
+        if count == output_idx
+          outputs << (x * output_idx)
+          output_idx += 40
+        end
+        x += val.to_i
+      end
+      count += 1
+    end
+    puts outputs.sum
+end
+puts sum_cycle_nums(nums)
