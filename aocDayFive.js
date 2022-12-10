@@ -125,29 +125,29 @@ for (let i = start; i <= cycleCount; i = i + commonDiff) {
   sum += map.get(i) * i;
 }
 
-console.log("part1 >> ", sum);
+// console.log("part1 >> ", sum);
 
-// // part2
-// let str = "";
+// part2
+let str = "";
 
-// for (let i = 1; i < cycleCount; i++) {
-//   if (isSpriteVisible(i)) {
-//     str += "#";
-//   } else {
-//     str += ".";
-//   }
+for (let i = 1; i < cycleCount; i++) {
+  if (isSpriteVisible(i)) {
+    str += "#";
+  } else {
+    str += ".";
+  }
 
-//   if (i % 40 === 0) {
-//     str += "\n";
-//   }
-// }
+  if (i % 40 === 0) {
+    str += "\n";
+  }
+}
 
-// // helper function
-// function isSpriteVisible(cycle) {
-//   let diff = (cycle % 40 ? cycle % 40 : 40) - map.get(cycle);
+// helper function
+function isSpriteVisible(cycle) {
+  let diff = (cycle % 40 ? cycle % 40 : 40) - map.get(cycle);
 
-//   return diff >= 0 && diff <= 2;
-// }
+  return diff >= 0 && diff <= 2;
+}
 
-// console.log("part2 >> ");
-// console.log(str);
+console.log("part2 >> ");
+console.log(str);
