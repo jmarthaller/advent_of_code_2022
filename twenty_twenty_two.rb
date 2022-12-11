@@ -369,29 +369,70 @@ rearrangements = File.readlines 'rearrangement_list.rb'
 # p simulate(input, 10)
 
 #day 10 
-nums = File.readlines('day_10_input.txt', chomp: true)
-def sum_cycle_nums(path)
-    x = 1
-    count = 1
-    output_idx = 20
-    outputs = []
-    File.readlines('day_10_input.txt', chomp: true).for_each_line(path) do |line|
-      command, val = line.split
-      if count == output_idx
-        outputs << (x * output_idx)
-        output_idx += 40
-      end
+# nums = File.readlines('day_10_input.txt', chomp: true)
+# def sum_cycle_nums(path)
+#     x = 1
+#     count = 1
+#     output_idx = 20
+#     outputs = []
+#     File.readlines('day_10_input.txt', chomp: true).for_each_line(path) do |line|
+#       command, val = line.split
+#       if count == output_idx
+#         outputs << (x * output_idx)
+#         output_idx += 40
+#       end
 
-      unless command == 'noop'
-        count += 1
-        if count == output_idx
-          outputs << (x * output_idx)
-          output_idx += 40
-        end
-        x += val.to_i
-      end
-      count += 1
+#       unless command == 'noop'
+#         count += 1
+#         if count == output_idx
+#           outputs << (x * output_idx)
+#           output_idx += 40
+#         end
+#         x += val.to_i
+#       end
+#       count += 1
+#     end
+#     puts outputs.sum
+# end
+# puts sum_cycle_nums(nums)
+
+
+# day 11
+# monkeys = File.readlines('day_11_input.txt', chomp: true)
+# def find_monkey_business(list)
+#     puts list
+# end
+# find_monkey_business(monkeys)
+[{ rounds: 20, div: 3 }, { rounds: 10_000, div: 1 }].each do |part|
+    monkeys = File.read('day_11_input.txt').split("\n\n").map do |i|
+      i = i.split("\n")
+  
+      {
+        items: i[1].scan(/\d+/).map(&:to_i),
+        oper: i[2].scan(/[+*]/).first.to_sym,
+        param: i[2].scan(/\d+$/).map(&:to_i).first,
+        test: i[3].scan(/\d+$/).first.to_i,
+        pass: i[4].scan(/\d+$/).first.to_i,
+        fail: i[5].scan(/\d+$/).first.to_i,
+        inspections: 0
+      }
     end
-    puts outputs.sum
-end
-puts sum_cycle_nums(nums)
+  
+    lcm = monkeys.map { |i| i[:test] }.reduce(:lcm)
+  
+    part[:rounds].times.each do
+      monkeys.each do |monkey|
+        monkey[:inspections] += monkey[:items].size
+  
+        while (i = monkey[:items].shift)
+          param = monkey[:param] || i
+          i = (i.method(monkey[:oper]).call(param) / part[:div]) % lcm
+  
+          target = (i % monkey[:test]).zero? ? monkey[:pass] : monkey[:fail]
+          monkeys[target][:items] << i
+        end
+      end
+    end
+  
+    puts monkeys.map { |i| i[:inspections] }.max(2).reduce(:*)
+  end
