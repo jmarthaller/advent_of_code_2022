@@ -1,6 +1,6 @@
 // import path from "path";
 // import fs from "fs";
-const fs = require("fs");
+// const fs = require("fs");
 
 // const CRATE_SIZE = "[X]".length;
 // const raw_stacks_lines = raw_stacks.split("\n");
@@ -80,74 +80,105 @@ const fs = require("fs");
 // console.log("Part Two:", top_crates_p2);
 // import { syncReadFile } from "../utils.js";
 
-let arr = fs
-  .readFileSync("day_10_input.txt", "utf8")
+// let arr = fs
+//   .readFileSync("day_10_input.txt", "utf8")
+//   .toString()
+//   .trim()
+//   .split("\n");
+// // .split("\n\n");
+
+// // let arr = syncReadFile("./input.txt");
+// // sample.txt expects 13140 as answer for part 1
+// // sample.txt expects something rendered as answer for part 2
+
+// arr = arr.map((item) => {
+//   return item.split(" ");
+// });
+
+// let map = new Map();
+// let cycleCount = 1;
+// let x = 1;
+
+// // creating the map
+// arr.forEach((item) => {
+//   let [action, addValue] = item;
+//   addValue = parseInt(addValue);
+
+//   if (action === "noop") {
+//     map.set(cycleCount, x);
+//     cycleCount++;
+//   } else {
+//     map.set(cycleCount, x);
+//     cycleCount++;
+//     map.set(cycleCount, x);
+//     x += addValue;
+//     cycleCount++;
+//   }
+// });
+
+// //part1
+// let start = 20;
+// let commonDiff = 40;
+// let sum = 0;
+
+// for (let i = start; i <= cycleCount; i = i + commonDiff) {
+//   sum += map.get(i) * i;
+// }
+
+// // console.log("part1 >> ", sum);
+
+// // part2
+// let str = "";
+
+// for (let i = 1; i < cycleCount; i++) {
+//   if (isSpriteVisible(i)) {
+//     str += "#";
+//   } else {
+//     str += ".";
+//   }
+
+//   if (i % 40 === 0) {
+//     str += "\n";
+//   }
+// }
+
+// // helper function
+// function isSpriteVisible(cycle) {
+//   let diff = (cycle % 40 ? cycle % 40 : 40) - map.get(cycle);
+
+//   return diff >= 0 && diff <= 2;
+// }
+
+// console.log("part2 >> ");
+// console.log(str);
+
+input = require("fs")
+  .readFileSync("day_13_input.txt")
   .toString()
-  .trim()
-  .split("\n");
-// .split("\n\n");
+  .split("\r")
+  .join("")
+  .split("\n\n")
+  .map((l) => l.split("\n").map((x) => JSON.parse(x)));
 
-// let arr = syncReadFile("./input.txt");
-// sample.txt expects 13140 as answer for part 1
-// sample.txt expects something rendered as answer for part 2
-
-arr = arr.map((item) => {
-  return item.split(" ");
-});
-
-let map = new Map();
-let cycleCount = 1;
-let x = 1;
-
-// creating the map
-arr.forEach((item) => {
-  let [action, addValue] = item;
-  addValue = parseInt(addValue);
-
-  if (action === "noop") {
-    map.set(cycleCount, x);
-    cycleCount++;
-  } else {
-    map.set(cycleCount, x);
-    cycleCount++;
-    map.set(cycleCount, x);
-    x += addValue;
-    cycleCount++;
-  }
-});
-
-//part1
-let start = 20;
-let commonDiff = 40;
-let sum = 0;
-
-for (let i = start; i <= cycleCount; i = i + commonDiff) {
-  sum += map.get(i) * i;
-}
-
-// console.log("part1 >> ", sum);
-
-// part2
-let str = "";
-
-for (let i = 1; i < cycleCount; i++) {
-  if (isSpriteVisible(i)) {
-    str += "#";
-  } else {
-    str += ".";
-  }
-
-  if (i % 40 === 0) {
-    str += "\n";
+function checkValue(a, b) {
+  if (!Array.isArray(a) && !Array.isArray(b)) return a - b;
+  else {
+    if (!Array.isArray(a)) a = [a];
+    if (!Array.isArray(b)) b = [b];
+    for (var i = 0; i < Math.min(a.length, b.length); i++)
+      if ((res = checkValue(a[i], b[i])) != 0) return res;
+    return a.length - b.length;
   }
 }
 
-// helper function
-function isSpriteVisible(cycle) {
-  let diff = (cycle % 40 ? cycle % 40 : 40) - map.get(cycle);
+console.log(
+  "PART 1:",
+  input.reduce((sum, l, i) => sum + (checkValue(l[0], l[1]) > 0 ? 0 : i + 1), 0)
+);
 
-  return diff >= 0 && diff <= 2;
-}
-
-console.log("part2 >> ");
-console.log(str);
+input.push([[[2]], [[6]]]);
+part2 = input
+  .flat()
+  .sort((a, b) => checkValue(a, b))
+  .map((x) => x.toString());
+console.log("PART 2:", (part2.indexOf("2") + 1) * (part2.indexOf("6") + 1));
