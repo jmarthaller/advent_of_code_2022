@@ -662,97 +662,173 @@ rearrangements = File.readlines 'rearrangement_list.rb'
 
 
 # day 14
-module Visualisation
-    def self.print_grid(grid, centre_x: 20, centre_y: 20, x_dim: 40, y_dim: 40, sleep: 0.01, spacer: ' ', colour_char: nil, colour: nil)
-      system('clear')
-      x_origin = centre_x - (x_dim / 2) >= 0 ? centre_x - (x_dim / 2) : 0
-      y_origin = centre_y - (y_dim / 2) >= 0 ? centre_y - (y_dim / 2) : 0
-      (x_origin..x_origin + x_dim - 1).each do |x|
-        (y_origin..y_origin + y_dim - 1).each do |y|
-          grid_x = grid[x]
-          val = grid[x].nil? ? nil : grid_x[y]
-          val ||= '.'
-          print_and_flush("#{val}#{spacer}", colour_char, colour)
-        end
-        puts ''.black
-      end
-      sleep(sleep)
-    end
+# module Visualisation
+#     def self.print_grid(grid, centre_x: 20, centre_y: 20, x_dim: 40, y_dim: 40, sleep: 0.01, spacer: ' ', colour_char: nil, colour: nil)
+#       system('clear')
+#       x_origin = centre_x - (x_dim / 2) >= 0 ? centre_x - (x_dim / 2) : 0
+#       y_origin = centre_y - (y_dim / 2) >= 0 ? centre_y - (y_dim / 2) : 0
+#       (x_origin..x_origin + x_dim - 1).each do |x|
+#         (y_origin..y_origin + y_dim - 1).each do |y|
+#           grid_x = grid[x]
+#           val = grid[x].nil? ? nil : grid_x[y]
+#           val ||= '.'
+#           print_and_flush("#{val}#{spacer}", colour_char, colour)
+#         end
+#         puts ''.black
+#       end
+#       sleep(sleep)
+#     end
   
-    def self.print_and_flush(str, colour_char, colour)
-      str = ColorizedString[str].colorize(colour) if str[0] == colour_char
-      print(str)
-      $stdout.flush
-    end
-  end
+#     def self.print_and_flush(str, colour_char, colour)
+#       str = ColorizedString[str].colorize(colour) if str[0] == colour_char
+#       print(str)
+#       $stdout.flush
+#     end
+#   end
 
-def falling_sand_analyzer(path, input_type)
-    map = Array.new(600) { Array.new(600) { '.' } }
-    File.readlines(path, chomp: true).each do |line|
-        rock_path = line.split(' -> ').map { |x| x.split(',').map(&:to_i) }
-        rock_path.each_with_index do |coords, idx|
-        next if rock_path[idx + 1].nil?
+# def falling_sand_analyzer(path, input_type)
+#     map = Array.new(600) { Array.new(600) { '.' } }
+#     File.readlines(path, chomp: true).each do |line|
+#         rock_path = line.split(' -> ').map { |x| x.split(',').map(&:to_i) }
+#         rock_path.each_with_index do |coords, idx|
+#         next if rock_path[idx + 1].nil?
 
-        x1 = coords[0]
-        y1 = coords[1]
-        x2 = rock_path[idx + 1][0]
-        y2 = rock_path[idx + 1][1]
-        if x1 == x2
-            (y1, y2 = y2, y1) if y1 > y2
-            (y1..y2).each do |y|
-            map[y][x1] = '#'
+#         x1 = coords[0]
+#         y1 = coords[1]
+#         x2 = rock_path[idx + 1][0]
+#         y2 = rock_path[idx + 1][1]
+#         if x1 == x2
+#             (y1, y2 = y2, y1) if y1 > y2
+#             (y1..y2).each do |y|
+#             map[y][x1] = '#'
+#             end
+#         end
+#         next unless y1 == y2
+
+#         (x1, x2 = x2, x1) if x1 > x2
+#         (x1..x2).each do |x|
+#             map[y1][x] = '#'
+#         end
+#         end
+#     end
+#     map[0][500] = '+'
+#     largest_y = 0
+#     2000.times do |num|
+#         _, y = fall(map, 500, 0, input_type == 'sample')
+#         if y.nil?
+#         puts "Steps: #{num}"
+#         break
+#         elsif y > largest_y
+#         largest_y = y
+#         end
+#     end
+#     puts "Largest Y: #{largest_y + 1}"
+#     end
+
+#     def fall(map, x, y, vis)
+#     print(map) if vis
+#     return [nil, nil] if x >= 599 || y >= 599
+
+#     if map[y + 1][x] == '.'
+#         map[y][x] = '.'
+#         map[y + 1][x] = '+'
+#         return fall(map, x, y + 1, vis)
+#     end
+
+#     if map[y + 1][x - 1] == '.'
+#         map[y][x] = '.'
+#         map[y + 1][x - 1] = '+'
+#         return fall(map, x - 1, y + 1, vis)
+#     end
+
+#     return [x, y] unless map[y + 1][x + 1] == '.'
+
+#     map[y][x] = '.'
+#     map[y + 1][x + 1] = '+'
+#     fall(map, x + 1, y + 1, vis)
+#     end
+
+#     def print(grid)
+#         Visualisation.print_grid(grid, centre_x: 6, centre_y: 500, x_dim: 12, y_dim: 23, sleep: 0.02, colour_char: '+', colour: :yellow)
+#     end
+
+
+# falling_sand_analyzer('day_14_input.txt', "")
+
+
+# part 2
+def number_of_fallen_sand_grains(path, input_type)
+        floor =
+          if input_type == 'sample'
+            9 + 2
+          else
+            160 + 2
+          end
+        map = Array.new(800) { Array.new(800) { '.' } }
+        File.readlines(path, chomp: true).each do |line|
+          rock_path = line.split(' -> ').map { |x| x.split(',').map(&:to_i) }
+          rock_path.each_with_index do |coords, idx|
+            next if rock_path[idx + 1].nil?
+  
+            x1 = coords[0]
+            y1 = coords[1]
+            x2 = rock_path[idx + 1][0]
+            y2 = rock_path[idx + 1][1]
+            if x1 == x2
+              (y1, y2 = y2, y1) if y1 > y2
+              (y1..y2).each do |y|
+                map[y][x1] = '#'
+              end
             end
+            next unless y1 == y2
+  
+            (x1, x2 = x2, x1) if x1 > x2
+            (x1..x2).each do |x|
+              map[y1][x] = '#'
+            end
+          end
         end
-        next unless y1 == y2
-
-        (x1, x2 = x2, x1) if x1 > x2
-        (x1..x2).each do |x|
-            map[y1][x] = '#'
+        map[0][500] = '+'
+  
+        800.times do |num|
+          map[floor][num] = '#'
         end
+  
+        100_000.times do |num|
+          x, y = fall(map, 500, 0, input_type == 'sample')
+          if x == 500 && y.zero?
+            puts num + 1
+            break
+          end
         end
-    end
-    map[0][500] = '+'
-    largest_y = 0
-    2000.times do |num|
-        _, y = fall(map, 500, 0, input_type == 'sample')
-        if y.nil?
-        puts "Steps: #{num}"
-        break
-        elsif y > largest_y
-        largest_y = y
+      end
+  
+      def fall(map, x, y, vis)
+        print(map) if vis
+        return [nil, nil] if x >= 799 || y >= 799
+  
+        if map[y + 1][x] == '.'
+          map[y][x] = '.'
+          map[y + 1][x] = '+'
+          return fall(map, x, y + 1, vis)
         end
-    end
-    puts "Largest Y: #{largest_y + 1}"
-    end
-
-    def fall(map, x, y, vis)
-    print(map) if vis
-    return [nil, nil] if x >= 599 || y >= 599
-
-    if map[y + 1][x] == '.'
+  
+        if map[y + 1][x - 1] == '.'
+          map[y][x] = '.'
+          map[y + 1][x - 1] = '+'
+          return fall(map, x - 1, y + 1, vis)
+        end
+  
+        return [x, y] unless map[y + 1][x + 1] == '.'
+  
         map[y][x] = '.'
-        map[y + 1][x] = '+'
-        return fall(map, x, y + 1, vis)
-    end
+        map[y + 1][x + 1] = '+'
+        fall(map, x + 1, y + 1, vis)
+      end
+  
+    #   def self.print(grid)
+    #     Visualisation.print_grid(grid, centre_x: 6, centre_y: 500, x_dim: 12, y_dim: 23, sleep: 0.02, colour_char: '+', colour: :yellow)
+    #   end
 
-    if map[y + 1][x - 1] == '.'
-        map[y][x] = '.'
-        map[y + 1][x - 1] = '+'
-        return fall(map, x - 1, y + 1, vis)
-    end
-
-    return [x, y] unless map[y + 1][x + 1] == '.'
-
-    map[y][x] = '.'
-    map[y + 1][x + 1] = '+'
-    fall(map, x + 1, y + 1, vis)
-    end
-
-    def print(grid)
-        Visualisation.print_grid(grid, centre_x: 6, centre_y: 500, x_dim: 12, y_dim: 23, sleep: 0.02, colour_char: '+', colour: :yellow)
-    end
-
-
-falling_sand_analyzer('day_14_input.txt', "")
-
-
+number_of_fallen_sand_grains('day_14_input.txt', "")
+# 24682
