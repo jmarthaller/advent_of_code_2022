@@ -755,7 +755,6 @@ rearrangements = File.readlines 'rearrangement_list.rb'
 
 # falling_sand_analyzer('day_14_input.txt', "")
 
-
 # part 2
 def number_of_fallen_sand_grains(path, input_type)
         floor =
@@ -825,10 +824,6 @@ def number_of_fallen_sand_grains(path, input_type)
         map[y + 1][x + 1] = '+'
         fall(map, x + 1, y + 1, vis)
       end
-  
-    #   def self.print(grid)
-    #     Visualisation.print_grid(grid, centre_x: 6, centre_y: 500, x_dim: 12, y_dim: 23, sleep: 0.02, colour_char: '+', colour: :yellow)
-    #   end
 
-number_of_fallen_sand_grains('day_14_input.txt', "")
-# 24682
+
+number_of_fallen_sand_grains('day_14_input.txt', "input")
