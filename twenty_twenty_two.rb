@@ -609,53 +609,150 @@ rearrangements = File.readlines 'rearrangement_list.rb'
 # end
 # ordered_packets_sum('day_13_input.txt')
 
-def find_divider_inidices(path)
-    packets = []
-    File.readlines(path, chomp: true).each do |line|
-      packets << eval(line)
-    end
-    packets << [[2]]
-    packets << [[6]]
-    packets = packets.compact
+# def find_divider_inidices(path)
+#     packets = []
+#     File.readlines(path, chomp: true).each do |line|
+#       packets << eval(line)
+#     end
+#     packets << [[2]]
+#     packets << [[6]]
+#     packets = packets.compact
 
-    packets =
-      packets.sort do |left, right|
-        res = left_vs_right(left, right)
-        if res.nil?
-          0
-        elsif res
-          -1
-        else
-          1
+#     packets =
+#       packets.sort do |left, right|
+#         res = left_vs_right(left, right)
+#         if res.nil?
+#           0
+#         elsif res
+#           -1
+#         else
+#           1
+#         end
+#       end
+
+#     divider_idxs = []
+#     packets.each_with_index do |val, idx|
+#       divider_idxs << (idx + 1) if [[[2]], [[6]]].include?(val)
+#     end
+#     puts divider_idxs.inject(:*)
+#   end
+
+#   def left_vs_right(left, right)
+#     max_idx = [left.size, right.size].max
+#     (0..max_idx - 1).each do |idx|
+#       left_val = left[idx]
+#       right_val = right[idx]
+
+#       return true if left_val.nil? && !right_val.nil?
+#       return false if right_val.nil? && !left_val.nil?
+
+#       if left_val.is_a?(Integer) && right_val.is_a?(Integer)
+#         return true if left_val < right_val
+#         return false if left_val > right_val
+#       end
+
+#       res = left_vs_right([left_val], right_val) if left_val.is_a?(Integer) && right_val.is_a?(Array)
+#       res = left_vs_right(left_val, [right_val]) if left_val.is_a?(Array) && right_val.is_a?(Integer)
+#       res = left_vs_right(left_val, right_val) if left_val.is_a?(Array) && right_val.is_a?(Array)
+#       return res unless res.nil?
+#     end
+#     nil
+#   end
+#   find_divider_inidices('day_13_input.txt')
+
+
+# day 14
+module Visualisation
+    def self.print_grid(grid, centre_x: 20, centre_y: 20, x_dim: 40, y_dim: 40, sleep: 0.01, spacer: ' ', colour_char: nil, colour: nil)
+      system('clear')
+      x_origin = centre_x - (x_dim / 2) >= 0 ? centre_x - (x_dim / 2) : 0
+      y_origin = centre_y - (y_dim / 2) >= 0 ? centre_y - (y_dim / 2) : 0
+      (x_origin..x_origin + x_dim - 1).each do |x|
+        (y_origin..y_origin + y_dim - 1).each do |y|
+          grid_x = grid[x]
+          val = grid[x].nil? ? nil : grid_x[y]
+          val ||= '.'
+          print_and_flush("#{val}#{spacer}", colour_char, colour)
         end
+        puts ''.black
       end
-
-    divider_idxs = []
-    packets.each_with_index do |val, idx|
-      divider_idxs << (idx + 1) if [[[2]], [[6]]].include?(val)
+      sleep(sleep)
     end
-    puts divider_idxs.inject(:*)
+  
+    def self.print_and_flush(str, colour_char, colour)
+      str = ColorizedString[str].colorize(colour) if str[0] == colour_char
+      print(str)
+      $stdout.flush
+    end
   end
 
-  def left_vs_right(left, right)
-    max_idx = [left.size, right.size].max
-    (0..max_idx - 1).each do |idx|
-      left_val = left[idx]
-      right_val = right[idx]
+def falling_sand_analyzer(path, input_type)
+    map = Array.new(600) { Array.new(600) { '.' } }
+    File.readlines(path, chomp: true).each do |line|
+        rock_path = line.split(' -> ').map { |x| x.split(',').map(&:to_i) }
+        rock_path.each_with_index do |coords, idx|
+        next if rock_path[idx + 1].nil?
 
-      return true if left_val.nil? && !right_val.nil?
-      return false if right_val.nil? && !left_val.nil?
+        x1 = coords[0]
+        y1 = coords[1]
+        x2 = rock_path[idx + 1][0]
+        y2 = rock_path[idx + 1][1]
+        if x1 == x2
+            (y1, y2 = y2, y1) if y1 > y2
+            (y1..y2).each do |y|
+            map[y][x1] = '#'
+            end
+        end
+        next unless y1 == y2
 
-      if left_val.is_a?(Integer) && right_val.is_a?(Integer)
-        return true if left_val < right_val
-        return false if left_val > right_val
-      end
-
-      res = left_vs_right([left_val], right_val) if left_val.is_a?(Integer) && right_val.is_a?(Array)
-      res = left_vs_right(left_val, [right_val]) if left_val.is_a?(Array) && right_val.is_a?(Integer)
-      res = left_vs_right(left_val, right_val) if left_val.is_a?(Array) && right_val.is_a?(Array)
-      return res unless res.nil?
+        (x1, x2 = x2, x1) if x1 > x2
+        (x1..x2).each do |x|
+            map[y1][x] = '#'
+        end
+        end
     end
-    nil
-  end
-  find_divider_inidices('day_13_input.txt')
+    map[0][500] = '+'
+    largest_y = 0
+    2000.times do |num|
+        _, y = fall(map, 500, 0, input_type == 'sample')
+        if y.nil?
+        puts "Steps: #{num}"
+        break
+        elsif y > largest_y
+        largest_y = y
+        end
+    end
+    puts "Largest Y: #{largest_y + 1}"
+    end
+
+    def fall(map, x, y, vis)
+    print(map) if vis
+    return [nil, nil] if x >= 599 || y >= 599
+
+    if map[y + 1][x] == '.'
+        map[y][x] = '.'
+        map[y + 1][x] = '+'
+        return fall(map, x, y + 1, vis)
+    end
+
+    if map[y + 1][x - 1] == '.'
+        map[y][x] = '.'
+        map[y + 1][x - 1] = '+'
+        return fall(map, x - 1, y + 1, vis)
+    end
+
+    return [x, y] unless map[y + 1][x + 1] == '.'
+
+    map[y][x] = '.'
+    map[y + 1][x + 1] = '+'
+    fall(map, x + 1, y + 1, vis)
+    end
+
+    def print(grid)
+        Visualisation.print_grid(grid, centre_x: 6, centre_y: 500, x_dim: 12, y_dim: 23, sleep: 0.02, colour_char: '+', colour: :yellow)
+    end
+
+
+falling_sand_analyzer('day_14_input.txt', "")
+
+
