@@ -316,103 +316,200 @@ fs = require("fs");
 // part2();
 
 //  day 15
-const lines = fs
-  .readFileSync("day_15_input.txt")
-  .toString()
-  .split("\n")
-  .filter((el) => el.length)
-  .map((line) => {
-    line = line.replace("Sensor at ", "");
-    const spl = line.split(": closest beacon is at ");
-    const sensor = [
-      Number(spl[0].split(", ")[0].replace("x=", "")),
-      Number(spl[0].split(", ")[1].replace("y=", "")),
-    ];
-    const beacon = [
-      Number(spl[1].split(", ")[0].replace("x=", "")),
-      Number(spl[1].split(", ")[1].replace("y=", "")),
-    ];
+// const lines = fs
+//   .readFileSync("day_15_input.txt")
+//   .toString()
+//   .split("\n")
+//   .filter((el) => el.length)
+//   .map((line) => {
+//     line = line.replace("Sensor at ", "");
+//     const spl = line.split(": closest beacon is at ");
+//     const sensor = [
+//       Number(spl[0].split(", ")[0].replace("x=", "")),
+//       Number(spl[0].split(", ")[1].replace("y=", "")),
+//     ];
+//     const beacon = [
+//       Number(spl[1].split(", ")[0].replace("x=", "")),
+//       Number(spl[1].split(", ")[1].replace("y=", "")),
+//     ];
 
-    return {
-      sensor: { x: sensor[0], y: sensor[1] },
-      beacon: { x: beacon[0], y: beacon[1] },
-    };
-  });
+//     return {
+//       sensor: { x: sensor[0], y: sensor[1] },
+//       beacon: { x: beacon[0], y: beacon[1] },
+//     };
+//   });
 
-const getRadius = (sensor, beacon) => {
-  return Math.abs(sensor.x - beacon.x) + Math.abs(sensor.y - beacon.y);
+// const getRadius = (sensor, beacon) => {
+//   return Math.abs(sensor.x - beacon.x) + Math.abs(sensor.y - beacon.y);
+// };
+
+// const getPointsOnLine = (lineY, sensor, radius) => {
+//   const diff = Math.abs(lineY - sensor.y);
+//   if (radius < diff) return null;
+
+//   if (diff === radius) return [sensor.x, sensor.x];
+
+//   const leftX = sensor.x - (radius - diff);
+//   const rightX = sensor.x + (radius - diff);
+
+//   return [leftX, rightX];
+// };
+
+// const mergeIntervals = (intervals) => {
+//   intervals.sort((a, b) => a[0] - b[0]);
+//   const merged = [intervals[0]];
+
+//   for (let i = 1; i < intervals.length; i++) {
+//     const [start, end] = intervals[i];
+//     let prev = merged[merged.length - 1];
+//     if (prev[1] >= start) {
+//       prev[1] = Math.max(prev[1], end);
+//     } else merged.push(intervals[i]);
+//   }
+//   return merged;
+// };
+
+// const getRangeOnLine = (target) => {
+//   const intervals = [];
+
+//   lines.forEach((line) => {
+//     const r = getRadius(line.sensor, line.beacon);
+//     const points = getPointsOnLine(target, line.sensor, r);
+//     if (points !== null) {
+//       intervals.push(points);
+//     }
+//   });
+
+//   const intervalsMerged = mergeIntervals(intervals);
+//   return intervalsMerged;
+// };
+
+// const first = () => {
+//   const target = 2000000;
+
+//   const intervalsMerged = getRangeOnLine(target);
+
+//   const totalLength = intervalsMerged.reduce((acc, i) => {
+//     return acc + (i[1] - i[0]);
+//   }, 0);
+
+//   console.log("first", totalLength);
+// };
+
+// const second = () => {
+//   let point;
+//   for (let i = 0; i <= 4000000; i++) {
+//     const intervals = getRangeOnLine(i);
+//     if (intervals.length > 1) {
+//       // Assumes that we need one point which is not at x 0 or x 4000000
+//       point = { x: intervals[0][1] + 1, y: i };
+//       break;
+//     }
+//   }
+
+//   console.log("second", point.x * 4000000 + point.y);
+// };
+
+// const main = () => {
+//   first();
+//   second();
+// };
+
+// main();
+
+// day 16
+const input = fs.readFileSync("day_16_input.txt", { encoding: "utf-8" });
+let nodes = input.split("\n").map((row, id) => {
+  let tmp = row.split(" ");
+  return {
+    id: id,
+    name: tmp[1],
+    rate: Number(tmp[4].match(/\d+/g)[0]),
+    connections: tmp.slice(tmp.indexOf("to") + 2).map((v) => v.substr(0, 2)),
+  };
+});
+
+let nodeByName = {};
+nodes.map((n, i) => (nodeByName[n.name] = n));
+
+const activeNodes = () => nodes.filter((n) => n.rate > 0);
+
+const distanceMap = (startName, distances = {}) => {
+  if (nodeByName[startName].distanceMap)
+    return nodeByName[startName].distanceMap;
+  const spread = (name, steps) => {
+    if (distances[name] != undefined && distances[name] <= steps) return;
+    distances[name] = steps;
+    nodeByName[name].connections.forEach((n) => spread(n, steps + 1));
+  };
+  spread(startName, 0);
+  nodeByName[startName].distanceMap = distances;
+  return distances;
 };
 
-const getPointsOnLine = (lineY, sensor, radius) => {
-  const diff = Math.abs(lineY - sensor.y);
-  if (radius < diff) return null;
+const computePaths = (timeLeft) => {
+  console.log("compute paths for time", timeLeft);
+  let paths = [
+    {
+      curr: "AA",
+      active: activeNodes().map((n) => n.name),
+      timeLeft: timeLeft,
+      finished: false,
+      steps: [],
+      releasedPressure: 0,
+    },
+  ];
 
-  if (diff === radius) return [sensor.x, sensor.x];
+  let max = 0;
 
-  const leftX = sensor.x - (radius - diff);
-  const rightX = sensor.x + (radius - diff);
+  for (let n = 0; n < paths.length; n++) {
+    let path = paths[n];
+    if (path.timeLeft <= 0) path.finished = true;
+    if (path.finished) continue;
 
-  return [leftX, rightX];
-};
-
-const mergeIntervals = (intervals) => {
-  intervals.sort((a, b) => a[0] - b[0]);
-  const merged = [intervals[0]];
-
-  for (let i = 1; i < intervals.length; i++) {
-    const [start, end] = intervals[i];
-    let prev = merged[merged.length - 1];
-    if (prev[1] >= start) {
-      prev[1] = Math.max(prev[1], end);
-    } else merged.push(intervals[i]);
+    let distances = distanceMap(path.curr),
+      moved = false;
+    path.active.forEach((act) => {
+      if (act == path.curr) return true;
+      if (path.timeLeft - distances[act] <= 1) return true;
+      moved = true;
+      paths.push({
+        curr: act,
+        active: path.active.filter((v) => v != act),
+        timeLeft: path.timeLeft - distances[act] - 1,
+        finished: false,
+        steps: [...path.steps, act],
+        releasedPressure:
+          path.releasedPressure +
+          (path.timeLeft - distances[act] - 1) * nodeByName[act].rate,
+      });
+    });
+    if (!moved) path.finished = true;
+    if (path.finished && path.releasedPressure > max)
+      max = path.releasedPressure;
   }
-  return merged;
+
+  return paths
+    .filter((p) => p.finished)
+    .sort((a, b) => b.releasedPressure - a.releasedPressure);
 };
 
-const getRangeOnLine = (target) => {
-  const intervals = [];
+const part2 = () => {
+  let paths = computePaths(26),
+    max = 0;
 
-  lines.forEach((line) => {
-    const r = getRadius(line.sensor, line.beacon);
-    const points = getPointsOnLine(target, line.sensor, r);
-    if (points !== null) {
-      intervals.push(points);
-    }
-  });
-
-  const intervalsMerged = mergeIntervals(intervals);
-  return intervalsMerged;
+  // this needs some memoization / speed-up / rethinking. Runs approx for 2 minutes ;/
+  for (let i = 0; i < paths.length; i++)
+    for (let j = i + 1; j < paths.length; j++)
+      if (paths[i].steps.every((s) => !paths[j].steps.includes(s)))
+        if (paths[i].releasedPressure + paths[j].releasedPressure > max) {
+          console.log(
+            "we have a new p2 max",
+            paths[i].releasedPressure + paths[j].releasedPressure
+          );
+          max = paths[i].releasedPressure + paths[j].releasedPressure;
+        }
 };
 
-const first = () => {
-  const target = 2000000;
-
-  const intervalsMerged = getRangeOnLine(target);
-
-  const totalLength = intervalsMerged.reduce((acc, i) => {
-    return acc + (i[1] - i[0]);
-  }, 0);
-
-  console.log("first", totalLength);
-};
-
-const second = () => {
-  let point;
-  for (let i = 0; i <= 4000000; i++) {
-    const intervals = getRangeOnLine(i);
-    if (intervals.length > 1) {
-      // Assumes that we need one point which is not at x 0 or x 4000000
-      point = { x: intervals[0][1] + 1, y: i };
-      break;
-    }
-  }
-
-  console.log("second", point.x * 4000000 + point.y);
-};
-
-const main = () => {
-  first();
-  second();
-};
-
-main();
+console.log(computePaths(30)[0].releasedPressure); // p1
+part2();
