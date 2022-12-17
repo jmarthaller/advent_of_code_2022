@@ -418,98 +418,307 @@ fs = require("fs");
 // main();
 
 // day 16
-const input = fs.readFileSync("day_16_input.txt", { encoding: "utf-8" });
-let nodes = input.split("\n").map((row, id) => {
-  let tmp = row.split(" ");
-  return {
-    id: id,
-    name: tmp[1],
-    rate: Number(tmp[4].match(/\d+/g)[0]),
-    connections: tmp.slice(tmp.indexOf("to") + 2).map((v) => v.substr(0, 2)),
-  };
-});
+// const input = fs.readFileSync("day_16_input.txt", { encoding: "utf-8" });
+// let nodes = input.split("\n").map((row, id) => {
+//   let tmp = row.split(" ");
+//   return {
+//     id: id,
+//     name: tmp[1],
+//     rate: Number(tmp[4].match(/\d+/g)[0]),
+//     connections: tmp.slice(tmp.indexOf("to") + 2).map((v) => v.substr(0, 2)),
+//   };
+// });
 
-let nodeByName = {};
-nodes.map((n, i) => (nodeByName[n.name] = n));
+// let nodeByName = {};
+// nodes.map((n, i) => (nodeByName[n.name] = n));
 
-const activeNodes = () => nodes.filter((n) => n.rate > 0);
+// const activeNodes = () => nodes.filter((n) => n.rate > 0);
 
-const distanceMap = (startName, distances = {}) => {
-  if (nodeByName[startName].distanceMap)
-    return nodeByName[startName].distanceMap;
-  const spread = (name, steps) => {
-    if (distances[name] != undefined && distances[name] <= steps) return;
-    distances[name] = steps;
-    nodeByName[name].connections.forEach((n) => spread(n, steps + 1));
-  };
-  spread(startName, 0);
-  nodeByName[startName].distanceMap = distances;
-  return distances;
-};
+// const distanceMap = (startName, distances = {}) => {
+//   if (nodeByName[startName].distanceMap)
+//     return nodeByName[startName].distanceMap;
+//   const spread = (name, steps) => {
+//     if (distances[name] != undefined && distances[name] <= steps) return;
+//     distances[name] = steps;
+//     nodeByName[name].connections.forEach((n) => spread(n, steps + 1));
+//   };
+//   spread(startName, 0);
+//   nodeByName[startName].distanceMap = distances;
+//   return distances;
+// };
 
-const computePaths = (timeLeft) => {
-  console.log("compute paths for time", timeLeft);
-  let paths = [
-    {
-      curr: "AA",
-      active: activeNodes().map((n) => n.name),
-      timeLeft: timeLeft,
-      finished: false,
-      steps: [],
-      releasedPressure: 0,
-    },
-  ];
+// const computePaths = (timeLeft) => {
+//   console.log("compute paths for time", timeLeft);
+//   let paths = [
+//     {
+//       curr: "AA",
+//       active: activeNodes().map((n) => n.name),
+//       timeLeft: timeLeft,
+//       finished: false,
+//       steps: [],
+//       releasedPressure: 0,
+//     },
+//   ];
 
-  let max = 0;
+//   let max = 0;
 
-  for (let n = 0; n < paths.length; n++) {
-    let path = paths[n];
-    if (path.timeLeft <= 0) path.finished = true;
-    if (path.finished) continue;
+//   for (let n = 0; n < paths.length; n++) {
+//     let path = paths[n];
+//     if (path.timeLeft <= 0) path.finished = true;
+//     if (path.finished) continue;
 
-    let distances = distanceMap(path.curr),
-      moved = false;
-    path.active.forEach((act) => {
-      if (act == path.curr) return true;
-      if (path.timeLeft - distances[act] <= 1) return true;
-      moved = true;
-      paths.push({
-        curr: act,
-        active: path.active.filter((v) => v != act),
-        timeLeft: path.timeLeft - distances[act] - 1,
-        finished: false,
-        steps: [...path.steps, act],
-        releasedPressure:
-          path.releasedPressure +
-          (path.timeLeft - distances[act] - 1) * nodeByName[act].rate,
-      });
+//     let distances = distanceMap(path.curr),
+//       moved = false;
+//     path.active.forEach((act) => {
+//       if (act == path.curr) return true;
+//       if (path.timeLeft - distances[act] <= 1) return true;
+//       moved = true;
+//       paths.push({
+//         curr: act,
+//         active: path.active.filter((v) => v != act),
+//         timeLeft: path.timeLeft - distances[act] - 1,
+//         finished: false,
+//         steps: [...path.steps, act],
+//         releasedPressure:
+//           path.releasedPressure +
+//           (path.timeLeft - distances[act] - 1) * nodeByName[act].rate,
+//       });
+//     });
+//     if (!moved) path.finished = true;
+//     if (path.finished && path.releasedPressure > max)
+//       max = path.releasedPressure;
+//   }
+
+//   return paths
+//     .filter((p) => p.finished)
+//     .sort((a, b) => b.releasedPressure - a.releasedPressure);
+// };
+
+// const part2 = () => {
+//   let paths = computePaths(26),
+//     max = 0;
+
+//   // this needs some memoization / speed-up / rethinking. Runs approx for 2 minutes ;/
+//   for (let i = 0; i < paths.length; i++)
+//     for (let j = i + 1; j < paths.length; j++)
+//       if (paths[i].steps.every((s) => !paths[j].steps.includes(s)))
+//         if (paths[i].releasedPressure + paths[j].releasedPressure > max) {
+//           console.log(
+//             "we have a new p2 max",
+//             paths[i].releasedPressure + paths[j].releasedPressure
+//           );
+//           max = paths[i].releasedPressure + paths[j].releasedPressure;
+//         }
+// };
+
+// console.log(computePaths(30)[0].releasedPressure); // p1
+// part2();
+
+// // day 17
+// function d17() {
+//   // let inp = document.body.innerText.trim();
+//   //let inp = ">>><<><>><<<>><>>><<<>>><<<><<<>><>><<>>";
+//   let inp = fs.readFileSync("input_day_17.txt");
+//   let space = [[], [], [], [], [], [], []]; //x is the first dimension, y is the second
+
+//   let template = [
+//     [
+//       [0, 0],
+//       [1, 0],
+//       [2, 0],
+//       [3, 0],
+//     ],
+//     [
+//       [1, 0],
+//       [1, 1],
+//       [0, 1],
+//       [2, 1],
+//       [1, 2],
+//     ],
+//     [
+//       [2, 2],
+//       [2, 1],
+//       [2, 0],
+//       [1, 0],
+//       [0, 0],
+//     ],
+//     [
+//       [0, 0],
+//       [0, 1],
+//       [0, 2],
+//       [0, 3],
+//     ],
+//     [
+//       [0, 0],
+//       [0, 1],
+//       [1, 0],
+//       [1, 1],
+//     ],
+//   ];
+
+//   let jetid = 0;
+//   let maxh = -1;
+//   let maxhm = 0;
+//   for (let i = 0; i < 18580; i++) {
+//     //if (i%5==0 && jetid%inp.length<100) console.log(jetid%inp.length,i);
+
+//     let rock = template[i % 5].map((x) => [x[0] + 2, x[1] + maxh + 4]);
+
+//     while (true) {
+//       //console.log(rock[0]);
+//       //l/r movement
+//       let jid = inp[jetid++ % inp.length];
+//       let nrock;
+//       if (jid == "<") nrock = rock.map((x) => [x[0] - 1, x[1]]);
+//       else nrock = rock.map((x) => [x[0] + 1, x[1]]);
+//       let repl = true;
+//       for (let c of nrock) {
+//         if (c[0] < 0 || c[0] >= 7 || space[c[0]][c[1]]) repl = false;
+//       }
+//       if (repl) rock = nrock;
+
+//       nrock = rock.map((x) => [x[0], x[1] - 1]);
+//       let fin = false;
+//       for (let c of nrock) {
+//         if (c[1] < 0 || space[c[0]][c[1]]) fin = true;
+//       }
+//       if (fin) {
+//         for (let c of rock) {
+//           space[c[0]][c[1]] = 1;
+//           if (c[1] > maxh) maxh = c[1];
+//         }
+//         break;
+//       } else rock = nrock;
+//     }
+//     if (maxh > 100) {
+//       space = space.map((x) => x.slice(30));
+//       maxh -= 30;
+//       maxhm++;
+//     }
+//   }
+//   return maxhm * 30 + maxh + 1 + 1560919511228;
+// }
+// console.log(d17());
+// 1560919559536
+// 1527145358991
+// 1514285714288
+// 1524637684121
+
+// const fs = require("fs");
+const performance = require("perf_hooks").performance;
+const eol = require("os").EOL;
+
+let startTime = performance.now();
+let part1 = (part2 = 0);
+let input = fs
+  .readFileSync("input_day_17.txt", "utf8")
+  .split(eol)
+  .join("")
+  .split("");
+let chamber = [["#", "#", "#", "#", "#", "#", "#", "#", "#"]];
+let segment = ["#", ".", ".", ".", ".", ".", ".", ".", "#"];
+
+let bloks = [
+  [["#", "#", "#", "#"]],
+  [
+    [".", "#", "."],
+    ["#", "#", "#"],
+    [".", "#", "."],
+  ],
+  [
+    ["#", "#", "#"],
+    [".", ".", "#"],
+    [".", ".", "#"],
+  ],
+  [["#"], ["#"], ["#"], ["#"]],
+  [
+    ["#", "#"],
+    ["#", "#"],
+  ],
+];
+let steps = 1000000000000;
+let blockIndex = 0;
+let numBlocks = bloks.length;
+let numjets = input.length;
+let topIndex = 1;
+let jetIndex = 0;
+
+function colides(block, blockX, blockY) {
+  return block.some((r, y) => {
+    return r.some((state, x) => {
+      return state == "#" && chamber[blockY + y][blockX + x] == "#";
     });
-    if (!moved) path.finished = true;
-    if (path.finished && path.releasedPressure > max)
-      max = path.releasedPressure;
+  });
+}
+
+function checkRepeat() {
+  let l = topIndex - 1;
+  let max = ~~(chamber.length / 2) - 5;
+  let len = max;
+  for (len; len > input.length / 5; len--) {
+    let same = true;
+    for (let i = 0; i < len; i++) {
+      if (
+        !chamber[l - i].every((el, ix) => el === chamber[l - (i + len)][ix])
+      ) {
+        same = false;
+        break;
+      }
+    }
+    if (same) {
+      return len;
+    }
+  }
+  return -1;
+}
+let repeatFound = false;
+let repeatLength = 0;
+let repeatNext = 0;
+let repeatStep = 0;
+let mult = 0;
+while (steps--) {
+  let block = bloks[blockIndex];
+  let blockHeight = block.length;
+  let blockY = topIndex + 3;
+  let blockX = 3;
+  while (blockY + blockHeight > chamber.length) {
+    chamber.push(segment.slice());
   }
 
-  return paths
-    .filter((p) => p.finished)
-    .sort((a, b) => b.releasedPressure - a.releasedPressure);
-};
-
-const part2 = () => {
-  let paths = computePaths(26),
-    max = 0;
-
-  // this needs some memoization / speed-up / rethinking. Runs approx for 2 minutes ;/
-  for (let i = 0; i < paths.length; i++)
-    for (let j = i + 1; j < paths.length; j++)
-      if (paths[i].steps.every((s) => !paths[j].steps.includes(s)))
-        if (paths[i].releasedPressure + paths[j].releasedPressure > max) {
-          console.log(
-            "we have a new p2 max",
-            paths[i].releasedPressure + paths[j].releasedPressure
-          );
-          max = paths[i].releasedPressure + paths[j].releasedPressure;
-        }
-};
-
-console.log(computePaths(30)[0].releasedPressure); // p1
-part2();
+  while (true) {
+    let jet = input[jetIndex++ % numjets] == "<" ? -1 : +1;
+    if (!colides(block, blockX + jet, blockY)) blockX += jet;
+    if (!colides(block, blockX, blockY - 1)) {
+      blockY--;
+    } else {
+      block.forEach((r, y) => {
+        r.forEach((state, x) => {
+          if (state == "#") chamber[blockY + y][blockX + x] = state;
+        });
+      });
+      topIndex = Math.max(blockY + blockHeight, topIndex);
+      break;
+    }
+  }
+  if (mult === 0) {
+    if (!repeatFound) {
+      let repeat = checkRepeat();
+      if (repeat != -1) {
+        repeatFound = true;
+        repeatNext = topIndex + repeat;
+        repeatLength = repeat;
+        repeatStep = steps;
+      }
+    } else if (repeatNext == topIndex) {
+      repeatStep = repeatStep - steps;
+      mult = Math.floor(steps / repeatStep);
+      let rest = steps % repeatStep;
+      steps = rest;
+    }
+  }
+  if (1000000000000 - steps == 2022) part1 = topIndex - 1;
+  if (++blockIndex == numBlocks) blockIndex = 0;
+}
+part2 = topIndex - 1 + mult * repeatLength;
+let time = performance.now() - startTime;
+console.log(`Part 1: ${part1}\nPart 2: ${part2}\nTimer: ${time} ms`);
