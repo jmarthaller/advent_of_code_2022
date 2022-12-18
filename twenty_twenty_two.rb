@@ -995,113 +995,210 @@ ROCKS = {
 # run('input_day_17.txt')
 
 
-def run_day_two(path)
-    jets = File.readlines(path, chomp: true)[0].chars.map { |x| x == '>' ? 1 : -1 }
-    grid = Array.new(WINDOW_SIZE + WINDOW_ADJUSTMENT) { Array.new(7) { '+' } }
-    sum_biggest_height = 0
-    last_biggest_height = 0
-    biggest_height = 0
-    count = 1
-    moves = 0
-    while count < 2023
-      rock_type = (count % 5).zero? ? 5 : count % 5
-      at_rest = false
-      x = 2
-      if biggest_height >= WINDOW_SIZE
-        sum_biggest_height += (biggest_height - last_biggest_height)
-        biggest_height -= WINDOW_ADJUSTMENT
-        last_biggest_height = biggest_height
-        10.times { grid << Array.new(7) { '+' } }
-        10.times { grid.shift }
-      end
-      y = biggest_height + 3
-      until at_rest
-        rock_points = get_grid_points(x, y, rock_type)
-        rock_points.each do |rock_point|
-          grid[rock_point[0]][rock_point[1]] = '#'
-        end
-        print(grid, biggest_height)
+# def run_day_two(path)
+#     jets = File.readlines(path, chomp: true)[0].chars.map { |x| x == '>' ? 1 : -1 }
+#     grid = Array.new(WINDOW_SIZE + WINDOW_ADJUSTMENT) { Array.new(7) { '+' } }
+#     sum_biggest_height = 0
+#     last_biggest_height = 0
+#     biggest_height = 0
+#     count = 1
+#     moves = 0
+#     while count < 2023
+#       rock_type = (count % 5).zero? ? 5 : count % 5
+#       at_rest = false
+#       x = 2
+#       if biggest_height >= WINDOW_SIZE
+#         sum_biggest_height += (biggest_height - last_biggest_height)
+#         biggest_height -= WINDOW_ADJUSTMENT
+#         last_biggest_height = biggest_height
+#         10.times { grid << Array.new(7) { '+' } }
+#         10.times { grid.shift }
+#       end
+#       y = biggest_height + 3
+#       until at_rest
+#         rock_points = get_grid_points(x, y, rock_type)
+#         rock_points.each do |rock_point|
+#           grid[rock_point[0]][rock_point[1]] = '#'
+#         end
+#         print(grid, biggest_height)
 
-        # move left or right
-        new_x = x + (moves.zero? ? jets[0] : jets[moves % jets.size])
-        check = !new_x.negative? && (new_x + ROCKS[rock_type][:width]) <= 7
-        move = true
-        if check
-          lr_rock_points = get_grid_points(new_x, y, rock_type)
-          (lr_rock_points - rock_points).each do |rock_point|
-            next unless move
+#         # move left or right
+#         new_x = x + (moves.zero? ? jets[0] : jets[moves % jets.size])
+#         check = !new_x.negative? && (new_x + ROCKS[rock_type][:width]) <= 7
+#         move = true
+#         if check
+#           lr_rock_points = get_grid_points(new_x, y, rock_type)
+#           (lr_rock_points - rock_points).each do |rock_point|
+#             next unless move
 
-            move = false if grid[rock_point[0]][rock_point[1]] == '#'
-          end
-          if move
-            x = new_x
-            rock_points.each do |rock_point|
-              grid[rock_point[0]][rock_point[1]] = '+'
-            end
-            rock_points = lr_rock_points
-            rock_points.each do |rock_point|
-              grid[rock_point[0]][rock_point[1]] = '#'
-            end
-            print(grid, biggest_height)
-          end
-        end
+#             move = false if grid[rock_point[0]][rock_point[1]] == '#'
+#           end
+#           if move
+#             x = new_x
+#             rock_points.each do |rock_point|
+#               grid[rock_point[0]][rock_point[1]] = '+'
+#             end
+#             rock_points = lr_rock_points
+#             rock_points.each do |rock_point|
+#               grid[rock_point[0]][rock_point[1]] = '#'
+#             end
+#             print(grid, biggest_height)
+#           end
+#         end
 
-        # move down
-        new_y = y - 1
-        move = true
-        if new_y.negative?
-          biggest_height = y + ROCKS[rock_type][:height] if y + ROCKS[rock_type][:height] > biggest_height
-          move = false
-          at_rest = true
-          moves += 1
-          break
-        end
-        d_rock_points = get_grid_points(x, new_y, rock_type)
-        (d_rock_points - rock_points).each do |rock_point|
-          next unless move
+#         # move down
+#         new_y = y - 1
+#         move = true
+#         if new_y.negative?
+#           biggest_height = y + ROCKS[rock_type][:height] if y + ROCKS[rock_type][:height] > biggest_height
+#           move = false
+#           at_rest = true
+#           moves += 1
+#           break
+#         end
+#         d_rock_points = get_grid_points(x, new_y, rock_type)
+#         (d_rock_points - rock_points).each do |rock_point|
+#           next unless move
 
-          move = false if grid[rock_point[0]][rock_point[1]] == '#'
-        end
-        if move
-          y = new_y
-          rock_points.each do |rock_point|
-            grid[rock_point[0]][rock_point[1]] = '+'
-          end
-          rock_points = d_rock_points
-          rock_points.each do |rock_point|
-            grid[rock_point[0]][rock_point[1]] = '#'
-          end
-          print(grid, biggest_height)
-        else
-          at_rest = true
-        end
+#           move = false if grid[rock_point[0]][rock_point[1]] == '#'
+#         end
+#         if move
+#           y = new_y
+#           rock_points.each do |rock_point|
+#             grid[rock_point[0]][rock_point[1]] = '+'
+#           end
+#           rock_points = d_rock_points
+#           rock_points.each do |rock_point|
+#             grid[rock_point[0]][rock_point[1]] = '#'
+#           end
+#           print(grid, biggest_height)
+#         else
+#           at_rest = true
+#         end
 
-        if at_rest
-          biggest_height = y + ROCKS[rock_type][:height] if y + ROCKS[rock_type][:height] > biggest_height
-        end
+#         if at_rest
+#           biggest_height = y + ROCKS[rock_type][:height] if y + ROCKS[rock_type][:height] > biggest_height
+#         end
 
-        moves += 1
-      end
-      if count == 1000000000000
-        sum_biggest_height += (biggest_height - last_biggest_height)
-      end
-      count += 1
+#         moves += 1
+#       end
+#       if count == 1000000000000
+#         sum_biggest_height += (biggest_height - last_biggest_height)
+#       end
+#       count += 1
+#     end
+#     puts sum_biggest_height
+#   end
+
+#   def get_grid_points(x, y, rock_type)
+#     points = []
+#     ROCKS[rock_type][:points].each do |point|
+#       points << point.call(x, y)
+#     end
+#     points
+#   end
+
+#   def print(grid, y)
+#     #Visualisation.print_grid(grid, centre_x: 20, centre_y: 4, x_dim: 40, y_dim: 8, sleep: 0.1, spacer: ' ', colour_char: '#', colour: :red, flip: true)
+#   end
+
+# run_day_two('input_day_17.txt')
+
+
+# day 18
+require "set"
+
+class Cube
+    attr_reader :x
+    attr_reader :y
+    attr_reader :z
+
+    def initialize(x, y, z)
+        @x = x
+        @y = y
+        @z = z
     end
-    puts sum_biggest_height
-  end
 
-  def get_grid_points(x, y, rock_type)
-    points = []
-    ROCKS[rock_type][:points].each do |point|
-      points << point.call(x, y)
+    def neighbors
+        [
+            Cube.new(@x-1, @y, @z), Cube.new(@x+1, @y, @z),
+            Cube.new(@x, @y-1, @z), Cube.new(@x, @y+1, @z),
+            Cube.new(@x, @y, @z-1), Cube.new(@x, @y, @z+1)
+        ]
     end
-    points
-  end
 
-  def print(grid, y)
-    #Visualisation.print_grid(grid, centre_x: 20, centre_y: 4, x_dim: 40, y_dim: 8, sleep: 0.1, spacer: ' ', colour_char: '#', colour: :red, flip: true)
-  end
+    def bounded_neighbors(x_bounds, y_bounds, z_bounds)
+        neighbors.select { |c|
+            x_bounds.include?(c.x) && y_bounds.include?(c.y) && z_bounds.include?(c.z) 
+        }
+    end
 
+    def eql?(other)
+        self.class == other.class && @x == other.x && @y == other.y && @z == other.z
+    end
 
+    def ==(other)
+        self.eql?(other)
+    end
 
-run_day_two('input_day_17.txt')
+    def hash
+        [self.class, @x, @y, @z].hash
+    end
+
+    def to_s
+        "(#{@x},#{@y},#{@z})"
+    end
+end
+
+def parse_cube(str)
+    Cube.new *(str.split(",").map { |s| s.to_i })
+end
+
+def surface_area(cubes)
+    cubes.reduce(0) { |sum, cube| 
+        adjacent = 6 - cube.neighbors.count { |n| cubes.include? n }
+        sum + adjacent
+    }
+end
+
+def bounding_ranges(cubes)
+    first = cubes.first()
+    min_x = max_x = first.x
+    min_y = max_y = first.y
+    min_z = max_z = first.z
+    cubes.each do |c|
+        min_x = c.x if c.x < min_x
+        max_x = c.x if c.x > max_x
+        min_y = c.y if c.y < min_y
+        max_y = c.y if c.y > max_y
+        min_z = c.z if c.z < min_z
+        max_z = c.z if c.z > max_z
+    end
+    [((min_x - 1)..(max_x + 1)), ((min_y - 1)..(max_y + 1)), ((min_z - 1)..(max_z + 1))]
+end
+
+def external_surface_area(cubes)
+    external_surfaces = 0
+    (x_range, y_range, z_range) = bounding_ranges(cubes)
+
+    open_cells = [Cube.new(x_range.first, y_range.first, z_range.first)]
+    closed_cells = open_cells.to_set
+
+    while open_cells.any?
+        cell = open_cells.pop
+        cell.bounded_neighbors(x_range, y_range, z_range).each do |neighbor|
+            next if closed_cells.include? neighbor
+            if cubes.include? neighbor
+                external_surfaces += 1
+            else
+                closed_cells << neighbor
+                open_cells << neighbor
+            end
+        end
+    end
+    external_surfaces
+end
+
+cubes = File.read("day_18_input.txt").split.map { |line| parse_cube(line) }.to_set
+puts "Part 1: #{surface_area cubes}"
+puts "Part 2: #{external_surface_area cubes}"
